@@ -17,11 +17,11 @@ users_col = db['users']
 @bot.message_handler(commands=['start'])
 def start(message):
     user_id = message.chat.id
-    # डेटाबेस में यूज़र चेक और सेव करना (पहले जैसा ही)
+    # डेटाबेस में यूज़र चेक और सेव करना
     if not users_col.find_one({"user_id": user_id}):
         users_col.insert_one({"user_id": user_id})
     
-    # सीधे मेनू दिखाना (बिना किसी कंडीशन के)
+    # बिना किसी रुकावट के सीधे मेनू दिखाना
     show_menu(user_id)
 
 def show_menu(chat_id):
@@ -51,7 +51,6 @@ def handle(call):
         bot.send_message(call.message.chat.id, f"🚀 **Your Link:**\n`{link}`", parse_mode="Markdown")
     
     elif call.data == "stats":
-        bot.answer_callback_query(call.id, "Stats functionality remains the same.", show_alert=True)
+        bot.answer_callback_query(call.id, "Stats logic is active in database.", show_alert=True)
 
 bot.polling()
-                                    
