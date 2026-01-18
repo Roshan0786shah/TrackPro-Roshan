@@ -3,12 +3,10 @@ import telebot
 import os
 
 app = Flask(__name__)
-# अपना टोकन Environment Variables में जरूर रखें
 bot = telebot.TeleBot(os.getenv("BOT_TOKEN"))
 
 @app.route('/')
 def home():
-    # यहाँ index.html लोड होगा
     return render_template('index.html', user_id=request.args.get('id'))
 
 @app.route('/log')
@@ -39,7 +37,6 @@ def log():
     return "OK"
 
 if __name__ == "__main__":
-    # Render के लिए पोर्ट को बाइंड करना जरूरी है
     port = int(os.environ.get("PORT", 5000))
     app.run(host='0.0.0.0', port=port)
     
