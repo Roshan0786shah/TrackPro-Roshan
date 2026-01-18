@@ -7,8 +7,6 @@ from pymongo import MongoClient
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 MONGO_URI = os.getenv("MONGO_URI")
 ADMIN_ID = 7162565886 
-CHANNEL_ID = "@HackersColony"
-YOUTUBE_URL = "https://youtube.com/@HackersColonyTech"
 WEB_URL = os.getenv("WEB_URL")
 
 bot = telebot.TeleBot(BOT_TOKEN)
@@ -16,26 +14,15 @@ client = MongoClient(MONGO_URI)
 db = client['RoshanTrackerDB']
 users_col = db['users']
 
-def is_joined(user_id):
-    try:
-        status = bot.get_chat_member(CHANNEL_ID, user_id).status
-        return status in ['member', 'administrator', 'creator']
-    except: return False
-
 @bot.message_handler(commands=['start'])
 def start(message):
     user_id = message.chat.id
+    # डेटाबेस में यूज़र चेक और सेव करना (पहले जैसा ही)
     if not users_col.find_one({"user_id": user_id}):
         users_col.insert_one({"user_id": user_id})
-
-    markup = types.InlineKeyboardMarkup()
-    if not is_joined(user_id):
-        markup.add(types.InlineKeyboardButton("📢 Join Telegram", url=f"https://t.me/{CHANNEL_ID[1:]}"))
-        markup.add(types.InlineKeyboardButton("📺 Subscribe YouTube", url=YOUTUBE_URL))
-        markup.add(types.InlineKeyboardButton("✅ Verify Joining", callback_data="check"))
-        bot.send_message(user_id, "🛡️ **Welcome!**\n\nPlease join our channels to unlock premium tracking tools.", reply_markup=markup, parse_mode="Markdown")
-    else:
-        show_menu(user_id)
+    
+    # सीधे मेनू दिखाना (बिना किसी कंडीशन के)
+    show_menu(user_id)
 
 def show_menu(chat_id):
     markup = types.InlineKeyboardMarkup(row_width=1)
@@ -59,12 +46,12 @@ def broadcast(message):
 
 @bot.callback_query_handler(func=lambda call: True)
 def handle(call):
-    if call.data == "check":
-        if is_joined(call.message.chat.id): show_menu(call.message.chat.id)
-        else: bot.answer_callback_query(call.id, "⚠️ Join first!", show_alert=True)
-    elif call.data == "gen_link":
+    if call.data == "gen_link":
         link = f"{WEB_URL}/?id={call.message.chat.id}"
         bot.send_message(call.message.chat.id, f"🚀 **Your Link:**\n`{link}`", parse_mode="Markdown")
+    
+    elif call.data == "stats":
+        bot.answer_callback_query(call.id, "Stats functionality remains the same.", show_alert=True)
 
 bot.polling()
-  
+                                    
